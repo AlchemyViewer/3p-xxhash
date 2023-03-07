@@ -34,6 +34,8 @@
                 <key>command</key>
                 <string>bash</string>
               </map>
+              <key>default</key>
+              <string>True</string>
               <key>name</key>
               <string>Release</string>
             </map>
