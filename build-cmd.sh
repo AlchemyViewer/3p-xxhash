@@ -25,7 +25,7 @@ source_environment_tempfile="$STAGING_DIR/source_environment.sh"
 "$autobuild" source_environment > "$source_environment_tempfile"
 . "$source_environment_tempfile"
 
-PKG_SOURCE_DIR="xxhash/cmake_unofficial"
+PKG_SOURCE_DIR="xxhash"
 PKG_VERSION="0.8.1"
 
 echo "${PKG_VERSION}" > "${STAGING_DIR}/VERSION.txt"
@@ -37,13 +37,18 @@ mkdir -p "$STAGING_DIR/lib/release"
 
 pushd "$top/$PKG_SOURCE_DIR"
     case "$AUTOBUILD_PLATFORM" in
+        common)
+            # copy headers
+            cp -a "xxh3.h" $STAGING_DIR/include/xxhash/
+            cp -a "xxhash.h" $STAGING_DIR/include/xxhash/
+        ;;
         windows*)
             load_vsvars
 
             mkdir -p "build_debug"
             pushd "build_debug"
                 # Invoke cmake and use as official build
-                cmake -G "$AUTOBUILD_WIN_CMAKE_GEN" -A "$AUTOBUILD_WIN_VSPLATFORM" .. \
+                cmake -G "$AUTOBUILD_WIN_CMAKE_GEN" -A "$AUTOBUILD_WIN_VSPLATFORM" ../cmake_unofficial \
                     -DCMAKE_INSTALL_PREFIX="$(cygpath -m $STAGING_DIR)/debug" \
                     -DBUILD_SHARED_LIBS=OFF \
                     -DXXHASH_BUILD_XXHSUM=OFF
@@ -60,7 +65,7 @@ pushd "$top/$PKG_SOURCE_DIR"
             mkdir -p "build_release"
             pushd "build_release"
                 # Invoke cmake and use as official build
-                cmake -G "$AUTOBUILD_WIN_CMAKE_GEN" -A "$AUTOBUILD_WIN_VSPLATFORM" .. \
+                cmake -G "$AUTOBUILD_WIN_CMAKE_GEN" -A "$AUTOBUILD_WIN_VSPLATFORM" ../cmake_unofficial \
                     -DCMAKE_INSTALL_PREFIX="$(cygpath -m $STAGING_DIR)/release" \
                     -DBUILD_SHARED_LIBS=OFF \
                     -DXXHASH_BUILD_XXHSUM=OFF
@@ -113,7 +118,7 @@ pushd "$top/$PKG_SOURCE_DIR"
                 CXXFLAGS="$ARCH_FLAGS_X86 $DEBUG_CXXFLAGS" \
                 CPPFLAGS="$DEBUG_CPPFLAGS" \
                 LDFLAGS="$ARCH_FLAGS_X86 $DEBUG_LDFLAGS" \
-                cmake .. -GXcode -DBUILD_SHARED_LIBS=OFF -DXXHASH_BUILD_XXHSUM=OFF \
+                cmake ../cmake_unofficial -GXcode -DBUILD_SHARED_LIBS=OFF -DXXHASH_BUILD_XXHSUM=OFF \
                     -DCMAKE_C_FLAGS="$ARCH_FLAGS_X86 $DEBUG_CFLAGS" \
                     -DCMAKE_CXX_FLAGS="$ARCH_FLAGS_X86 $DEBUG_CXXFLAGS" \
                     -DCMAKE_XCODE_ATTRIBUTE_GCC_OPTIMIZATION_LEVEL="0" \
@@ -147,7 +152,7 @@ pushd "$top/$PKG_SOURCE_DIR"
                 CXXFLAGS="$ARCH_FLAGS_X86 $RELEASE_CXXFLAGS" \
                 CPPFLAGS="$RELEASE_CPPFLAGS" \
                 LDFLAGS="$ARCH_FLAGS_X86 $RELEASE_LDFLAGS" \
-                cmake .. -GXcode -DBUILD_SHARED_LIBS=OFF -DXXHASH_BUILD_XXHSUM=OFF \
+                cmake ../cmake_unofficial -GXcode -DBUILD_SHARED_LIBS=OFF -DXXHASH_BUILD_XXHSUM=OFF \
                     -DCMAKE_C_FLAGS="$ARCH_FLAGS_X86 $RELEASE_CFLAGS" \
                     -DCMAKE_CXX_FLAGS="$ARCH_FLAGS_X86 $RELEASE_CXXFLAGS" \
                     -DCMAKE_XCODE_ATTRIBUTE_GCC_OPTIMIZATION_LEVEL="fast" \
@@ -184,7 +189,7 @@ pushd "$top/$PKG_SOURCE_DIR"
                 CXXFLAGS="$ARCH_FLAGS_ARM64 $DEBUG_CXXFLAGS" \
                 CPPFLAGS="$DEBUG_CPPFLAGS" \
                 LDFLAGS="$ARCH_FLAGS_ARM64 $DEBUG_LDFLAGS" \
-                cmake .. -GXcode -DBUILD_SHARED_LIBS=OFF -DXXHASH_BUILD_XXHSUM=OFF \
+                cmake ../cmake_unofficial -GXcode -DBUILD_SHARED_LIBS=OFF -DXXHASH_BUILD_XXHSUM=OFF \
                     -DCMAKE_C_FLAGS="$ARCH_FLAGS_ARM64 $DEBUG_CFLAGS" \
                     -DCMAKE_CXX_FLAGS="$ARCH_FLAGS_ARM64 $DEBUG_CXXFLAGS" \
                     -DCMAKE_XCODE_ATTRIBUTE_GCC_OPTIMIZATION_LEVEL="0" \
@@ -217,7 +222,7 @@ pushd "$top/$PKG_SOURCE_DIR"
                 CXXFLAGS="$ARCH_FLAGS_ARM64 $RELEASE_CXXFLAGS" \
                 CPPFLAGS="$RELEASE_CPPFLAGS" \
                 LDFLAGS="$ARCH_FLAGS_ARM64 $RELEASE_LDFLAGS" \
-                cmake .. -GXcode -DBUILD_SHARED_LIBS=OFF -DXXHASH_BUILD_XXHSUM=OFF \
+                cmake ../cmake_unofficial -GXcode -DBUILD_SHARED_LIBS=OFF -DXXHASH_BUILD_XXHSUM=OFF \
                     -DCMAKE_C_FLAGS="$ARCH_FLAGS_ARM64 $RELEASE_CFLAGS" \
                     -DCMAKE_CXX_FLAGS="$ARCH_FLAGS_ARM64 $RELEASE_CXXFLAGS" \
                     -DCMAKE_XCODE_ATTRIBUTE_GCC_OPTIMIZATION_LEVEL="fast" \
@@ -280,7 +285,7 @@ pushd "$top/$PKG_SOURCE_DIR"
             pushd "build_debug"
                 CFLAGS="$DEBUG_CFLAGS" \
                 CPPFLAGS="$DEBUG_CPPFLAGS" \
-                cmake .. -GNinja -DBUILD_SHARED_LIBS:BOOL=OFF \
+                cmake ../cmake_unofficial -GNinja -DBUILD_SHARED_LIBS:BOOL=OFF \
                     -DCMAKE_BUILD_TYPE="Debug" \
                     -DCMAKE_C_FLAGS="$DEBUG_CFLAGS" \
                     -DCMAKE_INSTALL_PREFIX="$STAGING_DIR/debug" \
@@ -299,7 +304,7 @@ pushd "$top/$PKG_SOURCE_DIR"
             pushd "build_release"
                 CFLAGS="$RELEASE_CFLAGS" \
                 CPPFLAGS="$RELEASE_CPPFLAGS" \
-                cmake .. -GNinja -DBUILD_SHARED_LIBS:BOOL=OFF \
+                cmake ../cmake_unofficial -GNinja -DBUILD_SHARED_LIBS:BOOL=OFF \
                     -DCMAKE_BUILD_TYPE="Release" \
                     -DCMAKE_C_FLAGS="$RELEASE_CFLAGS" \
                     -DCMAKE_INSTALL_PREFIX="$STAGING_DIR/release" \
@@ -324,5 +329,5 @@ pushd "$top/$PKG_SOURCE_DIR"
     esac
 
     mkdir -p "$STAGING_DIR/LICENSES"
-    cp ../LICENSE "$STAGING_DIR/LICENSES/xxhash.txt"
+    cp LICENSE "$STAGING_DIR/LICENSES/xxhash.txt"
 popd
