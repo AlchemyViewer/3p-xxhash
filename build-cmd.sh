@@ -26,7 +26,7 @@ source_environment_tempfile="$STAGING_DIR/source_environment.sh"
 . "$source_environment_tempfile"
 
 PKG_SOURCE_DIR="xxhash"
-PKG_VERSION="0.8.1"
+PKG_VERSION="0.8.2"
 
 echo "${PKG_VERSION}" > "${STAGING_DIR}/VERSION.txt"
 
