@@ -4,7 +4,7 @@
     <key>package_description</key>
     <map>
       <key>canonical_repo</key>
-      <string>https://git.alchemyviewer.org/alchemy/thirdparty/3p-xxhash</string>
+      <string>https://github.com/AlchemyViewer/3p-xxhash</string>
       <key>copyright</key>
       <string>Copyright (c) 2012-2021 Yann Collet</string>
       <key>description</key>
